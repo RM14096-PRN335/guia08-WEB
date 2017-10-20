@@ -92,6 +92,7 @@
                             <p:commandButton value="Crear" icon="ui-icon-disk"
                                              validateClient="true" ajax="true"
                                              update=":tabla_datos frm_detalle:formulario frm_detalle:btns"
+                                             resetValues="true"
                                              rendered="#{frmMeta.btnadd}"
                                              actionListener="#{frmMeta.guardarRegistro()}"/>
 

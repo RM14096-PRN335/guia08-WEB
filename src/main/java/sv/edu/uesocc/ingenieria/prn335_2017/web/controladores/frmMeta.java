@@ -120,6 +120,8 @@ public class frmMeta implements Serializable {
             if (this.registro != null && this.mfl != null) {
                 if (this.mfl.remove(registro)) {
                     this.registro = new Meta();
+                    this.botones = false;
+                    this.btnadd = true;
                     inicio();
                 }
             }
@@ -135,6 +137,8 @@ public class frmMeta implements Serializable {
         try {
             if (this.registro != null && this.mfl != null) {
                 if (this.mfl.edit(registro)) {
+                    this.botones = false;
+                    this.btnadd = true;
                     inicio();
                 }
             }
