@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="mostrar" type="sv.edu.uesocc.ingenieria.prn335_2017.web.controladores.genericoBean" required="true"/>
+        <cc:attribute name="entidadNombre" type="java.lang.String" required="true"/>
+        <cc:attribute name="refrescar" type="java.lang.String" required="false" default="@form :tabla"/>
+        
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:panelGrid columns="2" >  
+            <p:commandButton value="#{componente['crud.new']} #{cc.attrs.entidadNombre}" icon="ui-icon-new"
+                             validateClient="true" ajax="true"
+                             update="#{cc.attrs.refrescar}"
+                             disabled="false" resetValues="true"
+                             actionListener="#{cc.attrs.mostrar.nuevo()}"
+                             immediate="true"/>
+            <p:commandButton value="#{componente['crud.cancel']} #{cc.attrs.entidadNombre}" icon="ui-icon-cancel"
+                             validateClient="true" ajax="true"
+                             update="#{cc.attrs.refrescar}"
+                             disabled="false" resetValues="true"
+                             actionListener="#{cc.attrs.mostrar.btnCancelar()}"
+                             immediate="true"/>
+        </p:panelGrid>
+    </cc:implementation>
+</html>

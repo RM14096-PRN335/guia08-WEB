@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+        <h:head>
+            <ui:insert name="titulo"></ui:insert>
+        </h:head>
+        <h:body>
+            
+            <p:layout fullPage="true">
+                <p:layoutUnit position="north" size="50">
+                    <ui:insert name="header">
+                    <h:form>
+                        <p:outputLabel for="idiomas" value="#{componente['page.languajes']}:  " />
+                        <h:selectOneListbox id="idiomas" size="1" value="#{lenguajeBean.idioma}" 
+                                            valueChangeListener="#{lenguajeBean.cambioDeIdioma}"
+                                         onchange="submit()">
+                            <f:selectItems value="#{lenguajeBean.paises}"/>
+                        </h:selectOneListbox >
+                    </h:form>                
+                    </ui:insert>          
+                </p:layoutUnit>
+                
+                <p:layoutUnit position="center">
+                    <h2 align="center"><ui:insert name="tituloEntidad"></ui:insert></h2>
+                    <ui:insert name="tablaDatos"></ui:insert>
+                    
+                    
+                    
+                </p:layoutUnit>
+                
+                
+                <p:layoutUnit position="south" size="10%" style="border: 1" >
+     
+                    <h6 align="center">#{componente['prop.ad']}</h6>  
+                </p:layoutUnit> 
+            </p:layout>
+            
+            
+        </h:body> 
+    </ui:composition> 
+</html>

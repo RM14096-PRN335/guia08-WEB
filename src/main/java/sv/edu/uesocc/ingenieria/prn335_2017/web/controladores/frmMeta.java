@@ -6,17 +6,13 @@
 package sv.edu.uesocc.ingenieria.prn335_2017.web.controladores;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
+import org.primefaces.event.SelectEvent;
+import sv.edu.uesocc.ingenieria.prn335_2017.datos.acceso.AbstractIntarface;
 import sv.edu.uesocc.ingenieria.prn335_2017.datos.acceso.MetaFacadeLocal;
 import sv.edu.uesocc.ingenieria.prn335_2017.datos.definiciones.Meta;
 
@@ -26,7 +22,7 @@ import sv.edu.uesocc.ingenieria.prn335_2017.datos.definiciones.Meta;
  */
 @Named(value = "frmMeta")
 @ViewScoped
-public class frmMeta implements Serializable {
+public class frmMeta extends genericoBean<Meta> implements Serializable {
 
     /**
      * Creates a new instance of frmMeta
@@ -35,176 +31,133 @@ public class frmMeta implements Serializable {
     }
 
     @EJB
-    private MetaFacadeLocal mfl;
-    private LazyDataModel<Meta> modelo;
-    private Meta registro;
-    private boolean btnadd = true;
-    private boolean botones = false;
-    private boolean seleccions = false;
-
+    MetaFacadeLocal facade;
+    Meta metaEntity;
+    boolean btnVisible=false, btnadd = false, botones,botones2;
+    
     @PostConstruct
-    private void inicio() {
-
-        registro = new Meta();
-
-        try {
-            this.modelo = new LazyDataModel<Meta>() {
-                @Override
-                public Object getRowKey(Meta object) {
-                    if (object != null) {
-                        return object.getIdMeta();
-                    }
-                    return null;
-                }
-
-                @Override
-                public Meta getRowData(String rowKey) {
-                    if (rowKey != null && !rowKey.isEmpty() && this.getWrappedData() != null) {
-                        try {
-                            Integer buscado = new Integer(rowKey);
-                            for (Meta reg : (List<Meta>) getWrappedData()) {
-                                if (reg.getIdMeta().compareTo(buscado) == 0) {
-                                    return reg;
-                                }
-                            }
-                        } catch (Exception e) {
-                            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
-                        }
-                    }
-                    return null;
-                }
-
-                @Override
-                public List<Meta> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
-                    List<Meta> salida = new ArrayList();
-                    try {
-                        if (mfl != null) {
-                            this.setRowCount(mfl.count());
-                            salida = mfl.findRange(first, pageSize);
-
-                        }
-                    } catch (Exception e) {
-                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
-                    }
-                    return salida;
-                }
-
-            };
-        } catch (Exception e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
-        }
+    public void init(){
+        llenarLista();
+    }
+    
+    @Override
+    public Meta getEntity() {
+        return metaEntity;
     }
 
-    /**
-     * metodo para guardar los registros ingresados por el usuario
-     */
+    @Override
+    protected AbstractIntarface<Meta> getFacadeLocal() {
+        return facade;
+    }
+    
+    @Override
     public void guardarRegistro() {
-        try {
-            if (this.registro != null && this.mfl != null) {
-                if (this.mfl.create(registro)) {
-                    System.out.println("SE HA AGREGADO CON EXITO!! YA PODEMOS!!");
-                    inicio();
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("ERROR NO SE AGREGO NADA " + e);
-        }
+        super.guardarRegistro(); 
+        this.botones = false;
+        this.botones2 = false;
+        this.btnadd = false;
+        reiniciarValores();
+    }
+    
+    @Override
+    public void eliminar() {
+        super.eliminar();
+        this.botones = false;
+        this.botones2 = false;
+        this.btnadd = false;
+        reiniciarValores();
+    }
+    
+    @Override
+    public void modificar() {
+        super.modificar();
+        this.botones = false;
+        this.botones2 = false;
+        this.btnadd = false;
+        reiniciarValores();
+    }
+    
+    public void onRowSelect(SelectEvent event) {
+        btnVisible = true;
+    }
+    
+    @Override
+    public void btnCancelar() {
+        metaEntity = new Meta();
+        this.botones=false;
+        this.btnadd=false;
+        this.botones2=false;
+    }
+    
+    @Override
+    public void nuevo(){
+    metaEntity = new Meta();
+    this.botones = true;
+    this.btnadd = true;
+    this.botones2=false;
+    }
+    
+    @Override
+    public void botones2() {
+        botones2=false;
     }
 
-    /**
-     * metodo para eliminar un registro de la tabla selecionado
-     */
-    public void Eliminar() {
-        try {
-
-            if (this.registro != null && this.mfl != null) {
-                if (this.mfl.remove(registro)) {
-                    this.registro = new Meta();
-                    this.botones = false;
-                    this.btnadd = true;
-                    inicio();
-                }
-            }
-        } catch (Exception e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
-        }
+    @Override
+    public void botones() {
+        botones=false;
     }
-
-    /**
-     * metodo para modificar un dato ya ingresado, que se encuentre en la tabla
-     */
-    public void Modificar() {
-        try {
-            if (this.registro != null && this.mfl != null) {
-                if (this.mfl.edit(registro)) {
-                    this.botones = false;
-                    this.btnadd = true;
-                    inicio();
-                }
-            }
-        } catch (Exception e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
-        }
+    
+    public void reiniciarValores(){
+        metaEntity.setActivo(false);
+        metaEntity.setDescripcion(null);
+        metaEntity.setIdMeta(null);
+        metaEntity.setNombre(null);
     }
-
-    /**
-     * metodo que borra lo escrito en el formulario por el usuario
-     */
-    public void cancelar() {
-        this.registro = new Meta();
+    
+    public void cambiarSeleccion() {
         this.botones = false;
         this.btnadd = true;
+        this.botones2=true;
+
+    }
+    
+    
+    public MetaFacadeLocal getFacade() {
+        return facade;
     }
 
-    /**
-     * metodo para cambiar los botones, esconde o muestra los botones de
-     * eliminar,modificar,crear y cancelar
-     */
-    public void cambiarSeleccion() {
-        this.botones = true;
-        this.btnadd = false;
+    public boolean isBtnVisible() {
+        return btnVisible;
     }
 
-    /**
-     * manda a llamar los datos de la variable
-     *
-     * @return
-     */
-    public LazyDataModel<Meta> getModelo() {
-        return modelo;
+    public void setBtnVisible(boolean btnVisible) {
+        this.btnVisible = btnVisible;
+    }
+    
+    public void setFacade(MetaFacadeLocal facade) {
+        this.facade = facade;
     }
 
-    public void setModelo(LazyDataModel<Meta> modelo) {
-        this.modelo = modelo;
+    public Meta getMetaEntity() {
+        return metaEntity;
     }
 
-    /**
-     * manda a llamar los datos de la variable
-     *
-     * @return
-     */
-    public Meta getRegistro() {
-        return registro;
+    public void setMetaEntity(Meta metaEntity) {
+        this.metaEntity = metaEntity;
     }
 
-    /**
-     * se le asigna los valores a la variable
-     *
-     * @param metas
-     */
-    public void setRegistro(Meta registro) {
-        this.registro = registro;
+    public List<Meta> getListaDatos() {
+        return listaDatos;
     }
 
+    public void setListaDatos(List<Meta> listaDatos) {
+        this.listaDatos = listaDatos;
+    }
+    
     public boolean isBtnadd() {
         return btnadd;
     }
 
-    /**
-     * se le asigna los valores a la variable
-     *
-     * @param metas
-     */
     public void setBtnadd(boolean btnadd) {
         this.btnadd = btnadd;
     }
@@ -213,26 +166,18 @@ public class frmMeta implements Serializable {
         return botones;
     }
 
-    /**
-     * se le asigna los valores a la variable
-     *
-     * @param metas
-     */
     public void setBotones(boolean botones) {
         this.botones = botones;
     }
-
-    public boolean isSeleccions() {
-        return seleccions;
+    
+    public boolean isBotones2() {
+        return botones2;
     }
 
-    /**
-     * se le asigna los valores a la variable
-     *
-     * @param metas
-     */
-    public void setSeleccions(boolean seleccions) {
-        this.seleccions = seleccions;
+    public void setBotones2(boolean botones2) {
+        this.botones2 = botones2;
     }
 
+    
 }
+
